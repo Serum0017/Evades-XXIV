@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>Editor</title>
+        <link href="style.css" rel="stylesheet" type="text/css" />
+        <link rel="icon" type="image/png" href="../client/gfx/favicon.png" />
+        <!--commented for offline development (TODO: delete local files and uncomment)-->
+        <!--<script src="https://rawgit.com/kawanet/msgpack-lite/master/dist/msgpack.min.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/sat/0.9.0/SAT.min.js"
+            integrity="sha512-I/Whsg25W/NpxpNL5dXAySa7JMz/r0ibfrqaTUTT97m2ggJAYbiioXaqL5hfoXmZ1CsvXaPyLKrwe3sSem20/A=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>-->
+        <script src="../client/temp/SAT.js"></script>
+        <script src="../client/temp/msgpack.js"></script>
+    </head>
+
+    <body>
+        <canvas id="canvas"></canvas>
+        <div class="all-gui">
+            <!--<div class="leftgui-top">
+                <!- -<button class="file">Evades X - Editor</button> - ->
+                <button class="file">Edit</button>
+                <button class="file">View</button>
+                <button class="file">Insert</button>
+                <button class="file">Tools</button>
+            </div>-->
+            <div class="leftgui" id="leftgui">
+                <div class="create-submenu hidden">
+                    
+                </div>
+                <div class="create-div" id="create-button" title="c">
+                    <button class="create"></button>
+                    <span class="create-text">Create</span>
+                </div>
+                <div
+                    class="menu-button-div"
+                    id="delete-button"
+                    title="Delete"
+                >
+                    <button class="menu-button">X</button>
+                    <span class="menu-button-text">Delete</span>
+                </div>
+                <div class="create-div" id="duplicate-button" title="Ctrl+V">
+                    <div class="dupl-container">
+                        <button class="dupl-1"></button>
+                        <button class="dupl-2"></button>
+                    </div>
+                    <span class="create-text">Duplicate</span>
+                </div>
+                <div class="submenu">
+                    <span class="submenu-title">Transforms</span>
+                    <div class="menu-button-div" id="select" title="Ctrl+1">
+                        <button
+                            class="menu-button"
+                            style="
+                                font-size: 1.5rem !important;
+                                transform: rotate(180deg);
+                            "
+                        >
+                            &lt;&gt;
+                        </button>
+                        <span class="menu-button-text red" id="select-text"
+                            >Select</span
+                        >
+                    </div>
+                    <div class="menu-button-div" id="rotate" title="Ctrl+2">
+                        <button
+                            class="menu-button"
+                            style="font-size: 1.5rem !important"
+                        >
+                            ⟳
+                        </button>
+                        <span class="menu-button-text" id="rotate-text"
+                            >Rotate</span
+                        >
+                    </div>
+                    <!-- 				<div class="menu-button-div" id="move" title="Ctrl+2"> 
+	                    <button class="menu-button" style="font-size: 1.3rem !important;"><span style="margin: 2px;">M</span></button>
+	                    <span class="menu-button-text" id="move-text">Move</span>
+	                </div> -->
+                    <div class="menu-button-div" id="resize" title="Ctrl+3">
+                        <button
+                            class="menu-button"
+                            style="font-size: 1.5rem !important"
+                        >
+                            🗚
+                        </button>
+                        <span class="menu-button-text" id="resize-text"
+                            >Resize</span
+                        >
+                    </div>
+                </div>
+                <div class="submenu">
+                    <span class="submenu-title">Manage State</span>
+                    <div class="menu-button-div" id="undo" title="Ctrl+Z">
+                        <button class="menu-button">&lt;</button>
+                        <span class="menu-button-text">Undo</span>
+                    </div>
+                    <div class="menu-button-div" id="redo" title="Ctrl+Y">
+                        <button class="menu-button">&gt;</button>
+                        <span class="menu-button-text">Redo</span>
+                    </div>
+                    <div
+                        class="menu-button-div"
+                        id="clear"
+                        title="Ctrl+Delete"
+                    >
+                        <button class="menu-button">—</button>
+                        <span class="menu-button-text">Clear</span>
+                    </div>
+                    <div class="menu-button-div" id="save" title="Ctrl+S">
+                        <button class="menu-button">+</button>
+                        <span class="menu-button-text">Save</span>
+                    </div>
+                </div>
+                <div class="submenu" style="border-right: 1px solid black">
+                    <span class="submenu-title">Game</span>
+                    <div class="menu-button-div" id="play" title="P">
+                        <button
+                            class="menu-button"
+                            style="font-size: 1.5rem !important"
+                        >
+                            ▶
+                        </button>
+                        <span class="menu-button-text">Play</span>
+                    </div>
+                    <div class="menu-button-div" id="simulate" title="S">
+                        <!--<button
+                            class="menu-button"
+                            style="font-size: 1.5rem !important"
+                        >
+                            ▷
+                        </button>-->
+                        <!--<button
+                            class="menu-button"
+                            style="font-size: 1.5rem !important"
+                        >
+                            <span style="margin: 2px; font-size: 1.4rem;">l</span>
+                            <span style="margin: 2px; font-size: 1.4rem;">l</span>
+                        </button>-->
+                        <button class="menu-button" style="font-size: 1.5rem !important">
+                            <span style="margin: 2px; font-size: 1.4rem;">l</span><span style="margin: 2px; font-size: 1.4rem;">l</span>
+                        </button>
+                        <span class="menu-button-text">Simulate</span>
+                    </div>
+                    <!-- TODO: add 2 buttons: 1 that makes you godmode (God, outline is a simple circle and only appears when you're playing the game)
+                        and one that stops simulation during both editor and in game (cant be used for verification ofc) (done)-->
+                    <!--<div class="menu-button-div gui-disable">
+                        <button
+                            class="menu-button"
+                            style="font-size: 1.3rem !important"
+                        >
+                            <span style="margin: 2px">|</span
+                            ><span style="margin: 2px">|</span>
+                        </button>
+                        <span class="menu-button-text">Stop</span>
+                    </div>
+                    <div class="menu-button-div">
+                        <button
+                            class="menu-button"
+                            style="font-size: 1.5rem !important"
+                            id="test"
+                            title="T"
+                        >
+                            ▷
+                        </button>
+                        <span class="menu-button-text">Test</span>
+                    </div>-->
+                </div>
+                <div class="menu-button-div" id="import-button">
+                    <button class="menu-button">v</button>
+                    <span class="menu-button-text">Import</span>
+                </div>
+                <div class="menu-button-div" id="export">
+                    <button class="menu-button">^</button>
+                    <span class="menu-button-text">Export</span>
+                </div>
+                <div class="menu-button-div" id="resync">
+                    <button class="menu-button">#</button>
+                    <span class="menu-button-text">Resync</span>
+                </div>
+            </div>
+            <!--<div class="shortcut-gui">
+                <div class="shortcut" id="obstacle-shortcut" title="Obstacle">
+                    <span class="shortcut-text">1</span>
+                </div>
+                <div class="shortcut" id="lava-shortcut" title="Lava">
+                    <span class="shortcut-text">2</span>
+                </div>
+                <div class="shortcut" id="tp-shortcut" title="Teleporter">
+                    <span class="shortcut-text">3</span>
+                </div>
+            </div>-->
+            <div class="gui">
+                <div class="data-gui hidden"></div>
+                <button class="toggle-gui" data-usage="off">Open Menu</button>
+            </div>
+        </div>
+        <!--Shared files (have to be defined as a non-module)-->
+        <script src="../shared/Init/convertType.js"></script>
+        <script src="../shared/Init/satFactory.js"></script>
+        <script src="../shared/Init/initEnemy.js"></script>
+        <script src="../shared/Init/initEffect.js"></script>
+        <script src="../shared/Init/initShape.js"></script>
+        <script src="../shared/Init/initSimulate.js"></script>
+        <script src="../shared/Init/!initObstacle.js"></script>
+
+        <script src="../shared/minPack.js"></script>
+        <script src="../shared/defaultState.js"></script>
+        <script src="../shared/ServerPlayer.js"></script>
+        <script src="../shared/ServerMap.js"></script>
+
+        <script src="index.js" type="module"></script>
+    </body>
+</html>

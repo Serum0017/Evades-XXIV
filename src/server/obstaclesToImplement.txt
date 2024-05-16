@@ -1,0 +1,164 @@
+TODO: implement these obstacles
+
+--- Shape: ---
+None,
+Oval,
+CircularHollowSlice,
+Text,
+RoundedCorners,
+Bezier?,
+
+--- Simulate: ---
+NOTE: TODO: make simulateTypes an array before you add any of these types!
+Rotating,
+Growing (with anchor pt param and separate x and y growing),
+Switch,
+RotatePause,
+MovingPause,
+RotatingHoming (sentry -> except it has array of targets that can include obstacle ids [5,6,112] as well as a toRotateHomeToPlayers boolean that decides if we should home towards players. Homes towards the closest target. Damping object multiplictively determines how much less you home over distance (in this case its angle) like {2: 0.8} /*if you get twice as far away, you have 0.8x the speed*/),
+MovingHoming (sentry -> except it has array of targets that can include obstacle ids [5,6,112] as well as a toMoveHomeToPlayers boolean that decides if we should home towards players. homes towards the closest target. Damping object multiplictively determines how much less you home over distance like {2: 0.8} /*if you get twice as far away, you have 0.8x the speed*/),
+TurningHoming (like e2 homing enemies; moves but doesnt face the direction of the target instantly. Has an array of targets that can include obstacle ids [5,6,112] as well as a toTurnMoveHomeToPlayers boolean that decides if we should home towards players. homes towards the closest target. 2 damping objects (one for speed, one for change in angle) multiplictively determines how much less you home over distance like {2: 0.8} /*if you get twice as far away, you have 0.8x the speed*/),
+CollideWithTypes (like selfCollide enemy but with obstacles except you can supply an array of obstacle ids types that this obstacle can collide with. Also has a toCollideWithPlayers boolean that determines if the obstacle can collide w/ players. Default collides w/ all obstacle types),
+Repel (you can supply obstacle ids that this obstacle repels from like [1,2,123]. Default repels from all obstacle types. Damping object multiplicitively determines how much less you repel over distance {2: 0.8}/*if you are twice as far away, you will be repelled 0.8x as much*/ Has a repelStrength param that is global repelling strength.),
+Spawner (spawns other obstacles),
+Accel (changes simulateParams with keyframes ex. [{keyChain: ['moveSpeed'], startTime: 0, loop: true,/*if loop set to false, parameters will stop animating after keyframe 100. If loop set to true, after 100 is reached keyframes start back at 0.*/ keyFrames: {0: [20, 30, 10]/*set to 20, increase by 30+10*t each frame*/, 50: [10]/*set speed to 10*/, 100: [1,23,12,1,7]/*values before get increased by the values after each frame (position, speed, acceleration, jerk, ...)*/}, {keyChain: ['grav','x']/*.grav.x to acess subobject parameters*/, .../*you can modify multiple params at the same time*/}}]),
+Follow (follow another obstacle's parameters ex. follows x, y, moveSpeed of another enemy that has the same FollowId. Property on each key to either follow or interpolate, ex. [{keyChain: ['moveSpeed'], type: 'follow', bounds: {lower: 5, upper: 10} /*bounds to limit to (both keys are optional). only applies for numbers*/, numberOffset: -20 /*if this param is a number, the specified param will be set */}, {keyChain: ['grav','x']/*acessing subparameters*/, type: 'interpolate'}, keyChainTo: ['grav','y']/*we dont always wanna assign otherObstacle.x to this.x. If keyChainTo parameter is specified, assign keyChain param of other object to keyChainTo parameter of other object. Default keyChainTo to keyChain if not specified. Safety check is needed to make sure the two are the same type*/]),
+FollowId (defines id that other obstacles can follow, but doesnt do anything in itself),
+FollowPlayer (copies player's x and y position so that other obstacles can follow this (with interpolation on the other obstacle's end if needed). Boolean value parameter to copy ALL the player's parameters instead of just x and y.),
+EventResponse that triggers something when an event with matching id is fired. Possible things to trigger are:
+    - cloning an obstacle
+    - removing an obstacle
+    - changing a parameter of this: {keyChain: ['grav','y']}, output: (id, obstacle) => {if(id === this.); this.getKeyInChain(this.eventResponse)/*['grav','x'] turns into this.grav.x*/}
+    in practice, an obstacle with an eventResponse could be defined like this: {type: 'square-none-grav',x:0,y:0,w:100,h:100,direction:'down',force:100,eventResponses: [{type: 'changeParameter', id: 5, keyChain: ['amongUs','subparameter']},{type: 'changeParameter'/*you can change multiple parameters with a singular event*/, id: 5/*<- if i wanted to listen for 2 diff events and trigger two different things then i could set this id to 6*/, keyChain: ['otherParameter'/*can be same subparameter or different*/,'otherSubParameter']}]}
+EventEmitters (stuff emits an event with id, eventType, as well as event-specific parameters whenever something happens). Multiple EventEmitters should be able to be attached to the same object. Types of EventEmitters are:
+    - parameterEqualTo input: {keyChain: ['grav','x'], value: 3000}, emit: {id, obstacle}
+    - parameterLessThan input: {keyChain: ['moveSpeed'], value: 2}, emit: {id, obstacle}
+    - parameterGreaterThan input: {keyChain: ['moveSpeed'], value: 2}, emit: {id, obstacle}
+    - timePassed {maxTime: 5, startingTime: 2}/*in ticks*/ emit: {id, obstacle}
+    in practice, an obstacle with an eventEmitter could be defined like this: {type: 'square-none-grav',x:0,y:0,w:100,h:100,direction:'down',force:100,eventEmitters: [{type: 'parameterEqualTo', keyChain: ['grav','z'], value: 100, id: 5}/*i could attach another parameterEqualTo to this array to check if its equal to one of two values if i wanted*/]}. If you wanted to get really spicy 
+    NOTE: TODO: we should have presets in the editor for common things like an enemy hitting a wall or pushing buttons so that ppl dont get scared away from eventEmitters
+Enemy: 
+    - dasher
+    - e2dasher
+    - turning
+    - enemyGrav (pulls other enemies in)
+    - rain (as well as warper)
+    - memory
+    - flower
+    - pointAccel
+    - wavy
+    - jump
+    - pointAccel
+    - simulateSpawn (like semioldevade fire; stops and then spawns stuff in front of it where it will be <- include warning marker)
+
+--- Effect: ---
+✅ Tp,
+Safe,
+✅ Lava,
+SpeedObstacle,
+BoostPad (speedobstacle but it continues increasing like a timetrap)
+✅ Conveyor (gravobstacle),
+Checkpoint,
+StoryDisplay,
+Zone,
+SpeedTrap,
+WB,
+SizePlayer,
+Slip,
+FrictionChanger,
+Pushbox (make this a simulate?),
+Tornado,
+SnapGrid,
+VinetteIncrease,
+✅ ColorChange,
+Pusher (block with an x with a min and max)
+✅ Coin,
+✅ Platformer,
+TimeTrap (timeTrap, tpTrap, deathTrap, speedTrap, radiusTrap, etc.),
+InvincibilityPowerup,
+ToxicLava, (green lava w/ outline so that we dont confuse w/ tp that ignores inv)
+Filter,
+Particles,
+DeadMove,
+Revive,
+DrawObstacle,
+Clone (should support 2 types of clones: 1. basically another player being simulated, 2: same thing but changes to you are changes to clone),
+Ship,
+✅ coindoor,
+MusicChange,
+Redirect,
+CookieCheck,
+Typing,
+Mashing,
+RevivePowerup,
+Raycasting,
+Spring,
+CircularSnap,
+IDIT,
+CameraChange,
+Gun,
+Golf,
+Zoom,
+Deathmark (and DeathCure),
+rotateMovement,
+FallingArrow,
+HomingEnemy,
+Invert,
+DragonPowerup,
+PlayerCollide,
+CrowdButton,
+Hole (has to do an ainb check in sats. if player is inside this then it is doesnt collide w/ anything),
+AmogusPowerup,
+GunslingerPowerup,
+Demo,
+GrapplePowerup,
+GrapplePoint,
+ResetCoins,
+Bonus,
+CameraChange,
+Rail,
+DeadPusher,
+Wind (moves you in direction obstacles is moving w/ strength param.),
+GravityAura (pulls player to a point, default to center of obs),
+Obstacle that only bounds you if you're x px away from the center, (or something similar that cant be replicated by bouncy with 0 friction?) 
+Portal (has an id, blue/orange boolean. When entering a portal, you will be teleported to a random portal that has both the opposite parity (orange->blue, blue->orange) and same id. If none exist, you will be sent to {x: 0, y: 0})
+
+
+--- Renders: ---
+Block (transparency and color),
+
+-- Stuff for Demo: ---
+Obstacles:
+simulate
+- ✅ normal, ✅ moving, ✅ rotating, ✅ normalEnemy, ✅ spawner (turret), ✅ wavyEnemy
+shape:
+- ✅ square, ✅ circle, ✅ poly
+effect: ✅ snapgrid, ✅ speedchange, ✅ normal, ✅ bouncy, ✅ frictionchange, ✅ radiuschange, ✅ lava, ✅ conveyor, ✅ coin, ✅timeTrap, ✅ coindoor, ✅ breakable, ✅ tp, ✅ frictionChanger, ✅ platformer (will have a lot more settings than semioldevade platformer), ✅ rotateMovement, ✅ restrictAxis, other necessities for managing game like ✅ vinetteIncrease/ ❗musicChanger/ etc
+- ❗render:
+some way to do ✅text, ❓cool effects for each obstacle
+- bugs:
+
+
+Core Mechanics:
+- account system + usernames
+- mouse movement
+- ✅ minPack
+- ✅ eventSystem being able to "send" + change params dynamically (ex. changing speed obstacle to match the time of a timetrap)
+
+Maps:
+PoPB (peaceful) - planet of peaceful beginnings: This is the place where the player spawns for the first time upon loading the website (even before creating an account). We want the tutorial to make a lasting impression, so it wont be in the traditional style of the old tutorial. THERE WILL BE NO TEXT (except maybe WASD to move). Players will essentially be in a linear hallway with obstacles scattered around in specific ways aiming to teach the player. Things will be quite fast to grab the player's attention as fast as possible. There will be 10 zones with 1-2 obstacles introduced in each in clever ways that makes the player figure out what the obstacles do rather than being told that by text. 
+PoCA (moderate) - planet of conveyor abute: a fun planet that uses the conveyor mechanic a lot. This basically just filler so that we can get the game out quicker and players can have something to speedrun along with posc. The planet will be reworked a bit to be possible on mouse and certain parts (like driving) that arent supported will also be changed. Colors and polish/ theming will also be revamped to make it look less artificial.
+PoDD (ago) - planet to crush the player's hopes and to set a scale of difficulty. It should start out high ago and slowly decrease to low ago until the end so that players have high expectations of what it'll take to beat the map, but then come back later and beat it more easily, giving the player a bigger sense of progression. 
+
+PoTA (moderate) - planet of tiresome adventure: This is an explorative map with an emphasis on movement/ dodging in irregular spaces. It should feel more like an adventure rather than a super difficult skill test. It can reuse some ideas from povv if needed. There should also be parts where its pick-your-own-path (only some of the time, unlike povv) and maybe even a secret minigame hidden somewhere (mope?) semioldevade uni 3 minigames color scheme for the first zones.
+PoWW (difficult) - planet of wild wasteland: The map is basically a journey to go around a giant cube. It has fast enemies and a silver industrial vibe
+Themes:
+PoPB: green + posc-like
+PoCA: blue/ purple + ocean-like
+PoDD: dark + red -> stereotypical endgame map
+PoTA: dark green + jungle-like
+PoWW: silver + industrial vibes
+
+random ideas:
+- 3d pizza flying around the screen (doesnt do anything, just random troll that i thought would be funny)
+- multiple vinettes

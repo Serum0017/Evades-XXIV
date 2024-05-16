@@ -1,0 +1,22 @@
+{
+  "name": "evades-x",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/server/index.js",
+    "convert": "node ./src/mapConverter/!mapToNewEvadeConverter.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "canvas": "^2.11.2",
+    "express": "^4.18.2",
+    "msgpack-lite": "^0.1.26",
+    "sat": "^0.9.0",
+    "uuid": "^8.3.2",
+    "ws": "^8.8.0"
+  }
+}
